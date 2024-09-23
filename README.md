@@ -1,0 +1,1 @@
+# plugins-yotpo-social-reviews-for-woocommerce
