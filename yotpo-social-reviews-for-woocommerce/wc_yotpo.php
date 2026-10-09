@@ -3,7 +3,7 @@
 	Plugin Name: Yotpo Product Reviews
 	Description: Collect and display product reviews and ratings to showcase social proof and build trust.
 	Author: Yotpo
-	Version: 1.8.3
+	Version: 1.8.4
 	Author URI: http://www.yotpo.com?utm_source=yotpo_plugin_woocommerce&utm_medium=plugin_page_link&utm_campaign=woocommerce_plugin_page_link
 	Plugin URI: http://www.yotpo.com?utm_source=yotpo_plugin_woocommerce&utm_medium=plugin_page_link&utm_campaign=woocommerce_plugin_page_link
 	Requires at least: 6.0
@@ -542,7 +542,6 @@ function wc_yotpo_admin_styles($hook) {
 		wp_enqueue_script( 'yotpoSettingsJs', plugins_url('assets/js/settings.js', __FILE__), array('jquery-effects-core'));
 		wp_enqueue_style( 'yotpoSettingsStylesheet', plugins_url('assets/css/yotpo.css', __FILE__));
 	}
-	wp_enqueue_style('yotpoSideLogoStylesheet', plugins_url('assets/css/side-menu-logo.css', __FILE__));
 }
 function wc_yotpo_compatible() {
 	// HTTP calls go through wp_remote_* (since 1.8.0), so cURL is no longer required.
