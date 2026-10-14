@@ -3,14 +3,14 @@
 	Plugin Name: Yotpo Product Reviews
 	Description: Collect and display product reviews and ratings to showcase social proof and build trust.
 	Author: Yotpo
-	Version: 1.9.0
+	Version: 1.10.1
 	Author URI: http://www.yotpo.com?utm_source=yotpo_plugin_woocommerce&utm_medium=plugin_page_link&utm_campaign=woocommerce_plugin_page_link
 	Plugin URI: http://www.yotpo.com?utm_source=yotpo_plugin_woocommerce&utm_medium=plugin_page_link&utm_campaign=woocommerce_plugin_page_link
 	Requires at least: 6.0
 	Requires PHP: 7.4
 	Requires Plugins: woocommerce
 	WC requires at least: 3.0
-	WC tested up to: 11.1
+	WC tested up to: 11.2
 	License: GPLv2
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -39,12 +39,25 @@ require plugin_dir_path( __FILE__ ) . 'lib/utils/wc-yotpo-defaults.php';
 require plugin_dir_path( __FILE__ ) . 'lib/utils/wc-yotpo-functions.php';
 require plugin_dir_path( __FILE__ ) . 'lib/utils/widgets-rendering-logic.php';
 require plugin_dir_path( __FILE__ ) . 'lib/utils/allowed-html-functions.php';
+require plugin_dir_path( __FILE__ ) . 'lib/yotpo-api/class-yotpo-v3-client.php';
+require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-product-payload.php';
+require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-payload-compare.php';
+require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-catalog-api.php';
+require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-sync-state.php';
+require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-sync-jobs.php';
+require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-product-sync.php';
 
 function wc_yotpo_init() {
 	// Everything below relies on WooCommerce; without it the storefront hooks fatal on is_product().
 	if (!wc_yotpo_is_woocommerce_active()) {
 		add_action('admin_notices', 'wc_yotpo_woocommerce_missing_notice');
 		return;
+	}
+	// Product catalog sync to Yotpo (Core API V3), in background jobs.
+	Yotpo_Product_Sync::init();
+	if (defined('WP_CLI') && WP_CLI) {
+		require_once plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-sync-cli.php';
+		WP_CLI::add_command('yotpo product-sync', 'Yotpo_Sync_CLI');
 	}
 	$is_admin = is_admin();
 	if($is_admin) {
@@ -545,8 +558,9 @@ function wc_yotpo_conversion_track($order_id) {
 }
 function wc_yotpo_admin_styles($hook) {
 	if($hook == 'toplevel_page_woocommerce-yotpo-settings-page') {
-		wp_enqueue_script( 'yotpoSettingsJs', plugins_url('assets/js/settings.js', __FILE__), array('jquery-effects-core'));
-		wp_enqueue_style( 'yotpoSettingsStylesheet', plugins_url('assets/css/yotpo.css', __FILE__));
+		// Versioned by file time: without a version WordPress appends its own, so browsers kept the old files after a plugin update.
+		wp_enqueue_script( 'yotpoSettingsJs', plugins_url('assets/js/settings.js', __FILE__), array('jquery-effects-core'), filemtime( __DIR__ . '/assets/js/settings.js' ) );
+		wp_enqueue_style( 'yotpoSettingsStylesheet', plugins_url('assets/css/yotpo.css', __FILE__), array(), filemtime( __DIR__ . '/assets/css/yotpo.css' ) );
 	}
 }
 function wc_yotpo_compatible() {
