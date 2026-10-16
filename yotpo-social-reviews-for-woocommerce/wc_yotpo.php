@@ -3,7 +3,7 @@
 	Plugin Name: Yotpo Product Reviews
 	Description: Collect and display product reviews and ratings to showcase social proof and build trust.
 	Author: Yotpo
-	Version: 1.10.1
+	Version: 1.11.1
 	Author URI: http://www.yotpo.com?utm_source=yotpo_plugin_woocommerce&utm_medium=plugin_page_link&utm_campaign=woocommerce_plugin_page_link
 	Plugin URI: http://www.yotpo.com?utm_source=yotpo_plugin_woocommerce&utm_medium=plugin_page_link&utm_campaign=woocommerce_plugin_page_link
 	Requires at least: 6.0
@@ -24,7 +24,9 @@ register_activation_hook(   __FILE__, 'wc_yotpo_activation' );
 register_uninstall_hook( __FILE__, 'wc_yotpo_uninstall' );
 register_deactivation_hook( __FILE__, 'wc_yotpo_deactivate' );
 add_action('plugins_loaded', 'wc_yotpo_init');
-add_action('init', 'wc_yotpo_redirect');
+add_action('admin_init', 'wc_yotpo_redirect');
+// Settings saved by an older version lack the keys added since: fill them in on every read.
+add_filter('option_yotpo_settings', 'wc_yotpo_fill_missing_settings');
 add_action( 'woocommerce_order_status_changed', 'wc_yotpo_map');
 add_action( 'before_woocommerce_init', 'wc_declare_hops_support' );
 require plugin_dir_path( __FILE__ ) . 'lib/widgets/qna-widget.php';
@@ -40,7 +42,9 @@ require plugin_dir_path( __FILE__ ) . 'lib/utils/wc-yotpo-functions.php';
 require plugin_dir_path( __FILE__ ) . 'lib/utils/widgets-rendering-logic.php';
 require plugin_dir_path( __FILE__ ) . 'lib/utils/allowed-html-functions.php';
 require plugin_dir_path( __FILE__ ) . 'lib/yotpo-api/class-yotpo-v3-client.php';
+require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-product-terms.php';
 require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-product-payload.php';
+require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-product-tags.php';
 require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-payload-compare.php';
 require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-catalog-api.php';
 require plugin_dir_path( __FILE__ ) . 'lib/sync/class-yotpo-sync-state.php';

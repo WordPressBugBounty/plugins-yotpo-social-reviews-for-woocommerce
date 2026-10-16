@@ -115,6 +115,13 @@ function wc_display_yotpo_settings($success_type = false) {
             'Keeps your product catalog, including variations, up to date in Yotpo. Runs in the background.',
             '',
             "<div class='yotpo-status yotpo-tone--" . wc_yotpo_sync_status_tone() . "'>" . esc_html(Yotpo_Product_Sync::status_summary()) . "</div>"
+        ) .
+        yotpo_switch_row(
+            'product_sync_tags',
+            'product_sync_tags',
+            checked(true, Yotpo_Product_Sync::tags_on(), false),
+            'Use product tags for the blocklist, groups and custom questions',
+            "Tag products with <code>YBlocklist</code>, <code>YGroup_</code><i>group</i> or <code>YCRF_</code><i>form tag</i> to set their Yotpo blocklist, review group and custom question form. When on, these tags replace the blocklist, groups and form tags set in Yotpo, for example by catalog CSV."
         )
     );
 
@@ -145,7 +152,7 @@ function wc_display_yotpo_settings($success_type = false) {
             'yotpo_widget_language_code',
             $language_code,
             'Widget language',
-            "The 2-letter language code for the widgets, such as en or fr. <a href='http://support.yotpo.com/entries/21861473-Languages-Customization-' target='_blank' rel='noopener'>Supported languages</a>",
+            "The 2-letter language code for the widgets, such as en or fr. <a href='https://support.yotpo.com/docs/languages-yotpo-supports-for-widgets' target='_blank' rel='noopener'>Supported languages</a>",
             "maxlength='5'",
             '',
             'yotpo-input--short'
@@ -191,7 +198,7 @@ function wc_display_yotpo_settings($success_type = false) {
         "<div class='yotpo-row'>
             <div class='yotpo-row__text'>
                 <span class='yotpo-label'>Export reviews</span>
-                <p class='yotpo-help'>Downloads your WooCommerce reviews as a CSV file to import into Yotpo. <a href='https://support.yotpo.com/docs/woocommerce-installing-yotpo#4-importing-your-reviews-to-yotpo' target='_blank' rel='noopener'>How to import them</a></p>
+                <p class='yotpo-help'>Downloads your WooCommerce reviews as a CSV file to import into Yotpo. <a href='https://support.yotpo.com/docs/woocommerce-installing-yotpo#step-4-import-your-existing-reviews' target='_blank' rel='noopener'>How to import them</a></p>
             </div>
             <div class='yotpo-row__control'>
                 <button type='button' id='yotpo-export-reviews' class='yotpo-btn yotpo-btn--outline' " . disabled(true, $no_credentials, false) . ">Export reviews</button>
